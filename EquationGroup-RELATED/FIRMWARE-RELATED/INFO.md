@@ -43,6 +43,14 @@ The **Fanny** worm stands out from all the attacks performed by the Equation gro
 
 In particular, an infected USB stick with a hidden storage area was used to collect basic system information from a computer not connected to the Internet and to send it to the C&C when the USB stick was plugged into a computer infected by Fanny and having an Internet connection. If the attackers wanted to run commands on the air-gapped networks, they could save these commands in the hidden area of the USB stick. When the stick was plugged into the air-gapped computer, Fanny recognized the commands and executed them.
 
+Note: to explain the USB-Hidden areas:
+Fanny.bmp is making use of a FileSystem driver (FAT 16/32) and from there, creates a covert, storage (within the FAT) as well as using a rootkit.
+Here, information is stored, encrypted.
+
+
+### Fanny used two zero-days to replicate.
+https://securelist.com/a-fanny-equation-i-am-your-father-stuxnet/68787/
+
 
 
 ---------------------------------------------------------
@@ -67,3 +75,5 @@ Refs and further readings:
 - https://securelist.com/equation-the-death-star-of-malware-galaxy/68750/
 
 - https://github.com/loneicewolf/fanny.bmp
+
+- https://securelist.com/a-fanny-equation-i-am-your-father-stuxnet/68787/
