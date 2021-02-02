@@ -1,0 +1,8 @@
+﻿  GROK_Device.cpp
+d:\grok\grok_client\grok_device.cpp(44): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+  Generating code
+  2 of 116 functions ( 1.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  GROK_Client.vcxproj -> D:\GROK\GROK_Explorations\x64\Release\GROK_Client.exe
