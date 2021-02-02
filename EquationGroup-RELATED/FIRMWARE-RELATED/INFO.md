@@ -1,11 +1,4 @@
-Related:
-### Sample of fanny.bmp
 
-https://github.com/loneicewolf/fanny.bmp
-
-https://www.kaspersky.com/about/press-releases/2015_equation-group-the-crown-creator-of-cyber-espionage
-
-https://securelist.com/equation-the-death-star-of-malware-galaxy/68750/ 
 
 ## WHAT MAKES THE EQUATION GROUP UNIQUE?
 
@@ -65,3 +58,12 @@ In particular, an infected USB stick with a hidden storage area was used to coll
         
 ---------------------------------------------------------
 
+Refs and further readings:
+
+- https://github.com/loneicewolf/HDD-Firmware-RE
+
+- https://www.kaspersky.com/about/press-releases/2015_equation-group-the-crown-creator-of-cyber-espionage
+
+- https://securelist.com/equation-the-death-star-of-malware-galaxy/68750/
+
+- https://github.com/loneicewolf/fanny.bmp
