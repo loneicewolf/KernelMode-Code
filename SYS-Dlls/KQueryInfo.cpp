@@ -1,26 +1,32 @@
-/* quick, dirty routines that can be used in other parts of code.
-   Some in fact do rely on other parts, but their intent is obvious.
-*/
+// quick & dirty routines that can be used in other parts of code.
+// Some in fact do rely on other parts, but their intent is obvious.
 
+// these
+/*  Comment explaining the below code coming soon.  */
+// means I will soon comment the code below that comment.
+// RN: I do not have time, will do it later.
 
-HANDLE
-kGetPidFromName(
-	PCWSTR PsName
-)
-{
+HANDLE kGetPidFromName(PCWSTR PsName) {
+	
+	/*  Comment explaining the below code coming soon.  */
 	ULONG BufSize {};
 	HANDLE Pid {};
 	auto Status = ZwQuerySystemInformation(SystemProcessInformation,
 					       nullptr,
 					       0,
 					       &BufSize);
+	
+	/*  Comment explaining the below code coming soon.  */
 	if (Status != STATUS_INFO_LENGTH_MISMATCH){
 		dprintf("0x%08X - ZwQuerySystemInfo\n", Status);
 		return Pid;
 	}
-	auto PsInfo = (PSYSTEM_PROCESS_INFORMATION) ExAllocatePoolWithTag(NonPagedPoolNx,
-									  BufSize,
-									  KEXP_TAG);
+	
+	/*  Comment explaining the below code coming soon.  */
+	auto PsInfo = (PSYSTEM_PROCESS_INFORMATION)
+			ExAllocatePoolWithTag(NonPagedPoolNx,
+					      BufSize,
+					      KEXP_TAG);
 	if (!PsInfo)
 		return Pid;
 
@@ -28,12 +34,15 @@ kGetPidFromName(
 	                                  PsInfo,
 					  BufSize,
 					  nullptr);
+	
+	/*  If NT_SUCCESS ... (Ref: https:// )  */
 	if (!NT_SUCCESS(Status)) {
 		dprintf("0x%08X - ZwQuerySystemInfo\n", Status);
 		ExFreePoolWithTag(PsInfo, KEXP_TAG);
 		return Pid;
 	}
 	
+	/*  Comment explaining the below code coming soon.  */
 	auto OriginalPsInfo = PsInfo;
 	UNICODE_STRING ProcessName;
 	RtlInitUnicodeString(&ProcessName, PsName);
@@ -53,15 +62,15 @@ kGetPidFromName(
 }
 
 
-/* parsing the PEB to get k32 base.  Though not done here, accesing the PEB 
+  /*
+   parsing the PEB to get k32 base.  Though not done here, accesing the PEB 
    user address (like any user-mode VAS from kernel mode) needs to be
-   probed for in try/execept block */
-PVOID
-kGetK32BaseAddress()
-{
+   probed for in try/execept block
+  */
+PVOID kGetK32BaseAddress() {
 	auto Pid = kGetPidFromName(L"csrss.exe");
-	if (!Pid)
-		return nullptr;
+	
+	if (!Pid) /* Comment soon */ return nullptr; // Extra Additional keywords/Refs/comments  <- soon.
 	
 	PEPROCESS Process {};
 	auto Status = PsLookupProcessByProcessId(Pid, &Process);
@@ -92,14 +101,14 @@ kGetK32BaseAddress()
 	
 	KeUnstackDetachProcess(&ApcState);
 	
-	dprintf("0x%p - Kernel32.dll\n", k32Base);
+	
+	dprintf("0x%p - Kernel32.dll\n", k32Base); // if (write later) do [dbgPrint] [not done]  // /* <- */
 	
 	return k32Base;
 }
 
 
-VOID
-ImageCallback(
+VOID ImageCallback(
 	PUNICODE_STRING ImageName,
 	HANDLE Pid,
 	PIMAGE_INFO ImageInfo
@@ -126,29 +135,32 @@ enum class SYSTEM_DLL
 	kernel32
 };
 
-PVOID
-kGetSystemDllBase(
-	SYSTEM_DLL Module
-)
-{	
+PVOID kGetSystemDllBase(SYSTEM_DLL Module) {
+	
 	PVOID DllBase {};
 	HANDLE SectionHandle;
 	UNICODE_STRING SectionName;
+	
 	wchar_t ModulePath[100];
-
+	
 	switch (Module) {
+			
+		/* =========================================== */
 		case SYSTEM_DLL::ntdll:
-		{
-			RtlInitUnicodeString(&SectionName, KNOWN_DLLS_PATH NTDLL);
-			wcscpy(ModulePath, SYSTEM_PATH NTDLL);
-			break;
-		}
+			{
+				RtlInitUnicodeString(&SectionName, KNOWN_DLLS_PATH NTDLL);
+				wcscpy(ModulePath, SYSTEM_PATH NTDLL);
+				break;
+			}
+		/* =========================================== */
 		case SYSTEM_DLL::kernel32:
-		{
-			RtlInitUnicodeString(&SectionName, KNOWN_DLLS_PATH KERNEL32);
-			wcscpy(ModulePath, SYSTEM_PATH KERNEL32);
-			break;
-		}
+			{
+				RtlInitUnicodeString(&SectionName, KNOWN_DLLS_PATH KERNEL32);
+				wcscpy(ModulePath, SYSTEM_PATH KERNEL32);
+				break;
+			}
+			
+		/* =========================================== */
 		default:
 			return nullptr;
 	}
@@ -185,6 +197,7 @@ kGetSystemDllBase(
 
 	PUCHAR ModuleBase {};
 	ULONG ModuleSize {};
+	
         /* load the dll into system buffer, needs to be freed */
 	Status = KExplorer::kOpenFile(ModulePath,
                                       &ModuleBase,
@@ -193,7 +206,8 @@ kGetSystemDllBase(
 		auto Dos = (PIMAGE_DOS_HEADER) ModuleBase;
 		auto Nt = (PIMAGE_NT_HEADERS) (ModuleBase + Dos->e_lfanew);
 		DllBase = (PVOID) ((ULONG_PTR) SecImageInfo.TransferAddress - Nt->OptionalHeader.AddressOfEntryPoint);
-
+		
+		// 
 		ExFreePoolWithTag(ModuleBase, KEXP_TAG);
 	}
 
