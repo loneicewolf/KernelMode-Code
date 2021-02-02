@@ -32,6 +32,14 @@ Variety of windows kernel-mode driver code, from an x64 keylogger, re-implementi
         README.md
         
         
-        
+**EquationGroup-Related**
+
+GROK
+
+and some additional txts/docs and zips/pocs.
+
+more coming soon, and that is quickly!
+
+---------------------------------------------
         
         
