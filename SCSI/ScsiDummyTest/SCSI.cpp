@@ -7,7 +7,7 @@ typedef struct
 {
 	SCSI_PASS_THROUGH_DIRECT DirectData;
 	SENSE_DATA SenseData;
-} SCSI_CMD_DATA, *PSCSI_CMD_DATA;
+} 	SCSI_CMD_DATA, *PSCSI_CMD_DATA; //space
 
 
 NTSTATUS
@@ -20,22 +20,22 @@ SendScsiCmd(
 	ULONG DataTransferLen,
 	ULONG_PTR LogicalBlockAddress,
 	USHORT TransferLen
-)
-{
+	) {
+	
 	SCSI_CMD_DATA Data;
 	KEVENT Event;
 	IO_STATUS_BLOCK StatusBlk;
 
 
-	if (DeviceObj == nullptr)
-		return STATUS_UNSUCCESSFUL;
-
-	/* maybe it's 2 consecutive memsets to null 2 structs and the compiler
+	if (DeviceObj == nullptr) return STATUS_UNSUCCESSFUL;
+	
+	/*-----------------------------------------------------------------------------
+	maybe it's 2 consecutive memsets to null 2 structs and the compiler
 	optimized it out because they're layed out directly next to each other in memory
 	either way, size is 0x48 = SCSI_PASS_THROUGH_DIRECT + SENSE_DATA
-	i can't tell but whatever this works fine
-	*/
-
+	I can't tell but whatever this works fine
+	-----------------------------------------------------------------------------*/
+	
 	RtlZeroMemory(&Data, 0x48);
 
 	Data.DirectData.Length = (USHORT) sizeof(SCSI_PASS_THROUGH_DIRECT);
@@ -88,11 +88,10 @@ ScsiQueryCapacity(
 	ULONG LogicalBlockAddress, BytesPerBlock;
 
 	auto ReadCapacityData = (PREAD_CAPACITY_DATA) ExAllocatePoolWithTag(NonPagedPool,
-									    0x8,
-									    'iscs');
-									    
-																		8,
-																		'iscs');
+										0x8,
+										'iscs');
+										//8, 	   /*	anoth. Arch */
+										//'iscs'); /*	anoth. Arch */
 	SCSI_PASS_THROUGH_DIRECT ScsiData;
 	RtlSecureZeroMemory(&ScsiData, sizeof(ScsiData));
 
@@ -123,7 +122,8 @@ ScsiQueryCapacity(
 	if (Irp) {
 		auto Status = IoCallDriver(DeviceObj, Irp);
 
-		if (Status == STATUS_PENDING) {
+		if (Status == STATUS_PENDING) 
+		{
 			KeWaitForSingleObject(&Event, 
 			                      Executive,
 					      KernelMode,
@@ -132,13 +132,19 @@ ScsiQueryCapacity(
 			if (StatusBlk.Status == STATUS_SUCCESS)
 				goto PrintShit;
 		}
+		
 		if (NT_SUCCESS(Status)) {
-
+		
+		/* DbgPrints LogicalBlockAddr(int). And BytesPerBlock (int) */
 		PrintShit:
 			REVERSE_BYTES(&BytesPerBlock, &ReadCapacityData->BytesPerBlock);
 			REVERSE_BYTES(&LogicalBlockAddress, &ReadCapacityData->LogicalBlockAddress);
+			
+			DbgPrint("[+] ---------------- Worked! ----------------- [+]"); // Extra print out's
+			
 			DbgPrint("LogicalBlockAddress: %d : "
 					 "BytesPerBlock:%d\n", LogicalBlockAddress, BytesPerBlock);
+			
 		}
 	}
 	if (ReadCapacityData)
@@ -159,11 +165,13 @@ InitializeSCSISystemThread()
 		OBJECT_ATTRIBUTES ObjAttrs;
 		HANDLE FileHandle;
 		PFILE_OBJECT FileObj;
+		
 		InitializeObjectAttributes(&ObjAttrs,
 					   &TargetName,
 					   OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
 					   nullptr,
 					   nullptr);
+		
 		auto Status = IoCreateFile(&FileHandle,
 					   1,
 					   &ObjAttrs,
@@ -189,21 +197,20 @@ InitializeSCSISystemThread()
 						   nullptr);
 		
 		ZwClose(FileHandle);
-		if (NT_SUCCESS(Status)) {
+		if (NT_SUCCESS(Status))
+		{
 			ObDereferenceObject(FileObj);
-
 			auto DataBuffer = (BYTE*) ExAllocatePoolWithTag(NonPagedPool,
 									0x200,
 									'iScS');
+
 			auto DevCapacity = (PREAD_CAPACITY_DATA) ExAllocatePoolWithTag(NonPagedPool,
 										       0x8,
 										       'iScS');
-																		   0x8,
-																		   'iScS');
 			RtlSecureZeroMemory(DataBuffer, sizeof(DataBuffer));
 			RtlSecureZeroMemory(DevCapacity, sizeof(DevCapacity));
 
-			/* demo to test since ScsiQueryCapacity works*/
+			/* demo to test since ScsiQueryCapacity works */
 			SCSI::SendScsiCmd(FileObj->DeviceObject,
 					  SCSIOP_READ_CAPACITY,
 					  SCSI_IOCTL_DATA_IN,
@@ -211,6 +218,7 @@ InitializeSCSISystemThread()
 					  8,
 					  0,
 					  0);
+			
 			ExFreePoolWithTag(DevCapacity, 'iScS');
 			SCSI::SendScsiCmd(FileObj->DeviceObject,
 					  SCSIOP_READ,
@@ -219,6 +227,16 @@ InitializeSCSISystemThread()
 					  0x200,
 					  0,
 					  1);
+					/*------------------------------------------------------
+					| SCSI::SendScsiCmd(FileObj->DeviceObject,
+					| SCSIOP_READ,
+					| SCSI_IOCTL_DATA_IN,
+					| DataBuffer,
+					| 0x200,
+					| 0x08,
+					| 1);
+					|
+					------------------------------------------------------*/
 			
 			ExFreePoolWithTag(DataBuffer, 'iScS');
 			SCSI::ScsiQueryCapacity(FileObj->DeviceObject);
