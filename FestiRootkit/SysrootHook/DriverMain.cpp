@@ -1,4 +1,5 @@
 #include "KExplorer.h"
+//Make rem a h file <- this one is later needed
 
 extern "C" {
 	DRIVER_INITIALIZE DriverEntry;
