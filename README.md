@@ -2,7 +2,9 @@
 #### and ( soon coming ) Advanced stuff
 
 
-2021 Updated (still updating) - original repo: https://github.com/i-nino/KernelMode-Code
+- [x] 2021 Updated (still updating)
+- **[X] 2022 Updated (still doing so)!**
+
 
 ### Still adding POCS and Improvements as well as Docs
 
@@ -137,3 +139,14 @@ Refs and further readings:
 - https://github.com/loneicewolf/fanny.bmp
 
 - https://securelist.com/a-fanny-equation-i-am-your-father-stuxnet/68787/
+
+
+
+
+
+
+
+
+# ORIGINAL
+original repo(quite dead/out of date):  https://github.com/i-nino/KernelMode-Code
+
