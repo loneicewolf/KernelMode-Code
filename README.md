@@ -1,6 +1,7 @@
 # KernelMode-Code 
 #### and ( soon coming ) Advanced stuff
 
+related Link : https://github.com/loneicewolf/ReverseEngineering
 
 - [x] 2021 Updated (still updating)
 - **[X] 2022 Updated (still doing so)!**
