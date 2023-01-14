@@ -1,6 +1,15 @@
 # KernelMode-Code 
 #### and ( soon coming ) Advanced stuff
 
+#### Youtbe Channel
+- ***https://www.youtube.com/@useraccout1635/videos***
+
+```
+
+
+
+```
+
 related Link : https://github.com/loneicewolf/ReverseEngineering
 
 - [x] 2021 Updated (still updating)
