@@ -1,5 +1,4 @@
 # KernelMode-Code 
-* https://www.youtube.com/@useraccout1635/videos
 
 
 ### Still adding POCS and Improvements as well as Docs
